@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}我的房屋 - 安居乐{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">我的房屋信息</h4>
+            </div>
+            <div class="card-body">
+                {% if houses %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>房屋地址</th>
+                                <th>面积(㎡)</th>
+                                <th>单元/楼层/房号</th>
+                                <th>是否出租</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for house in houses %}
+                            <tr>
+                                <td>{{ house.building.community.name }} - {{ house.building.name }}</td>
+                                <td>{{ house.area }}</td>
+                                <td>{{ house.unit }}单元/{{ house.floor }}层/{{ house.room_number }}室</td>
+                                <td>
+                                    {% if house.is_rented %}
+                                    <span class="badge bg-warning">是</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">否</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    您还没有绑定房屋信息，请联系物业管理员添加
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

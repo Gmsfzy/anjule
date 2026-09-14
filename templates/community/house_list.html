@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}房屋管理 - 安居乐{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">创建新房屋</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="building" class="form-label">所属楼栋</label>
+                        <select class="form-select" id="building" name="building" required>
+                            {% for building in buildings %}
+                            <option value="{{ building.id }}">{{ building.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="unit" class="form-label">单元号</label>
+                            <input type="number" class="form-control" id="unit" name="unit" min="1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="floor" class="form-label">楼层</label>
+                            <input type="number" class="form-control" id="floor" name="floor" min="1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="room_number" class="form-label">房间号</label>
+                            <input type="text" class="form-control" id="room_number" name="room_number" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="area" class="form-label">房屋面积(㎡)</label>
+                        <input type="number" step="0.01" class="form-control" id="area" name="area" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="owner" class="form-label">房屋业主</label>
+                        <select class="form-select" id="owner" name="owner">
+                            <option value="">-- 选择业主 --</option>
+                            {% for resident in residents %}
+                            <option value="{{ resident.id }}">{{ resident.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_rented" name="is_rented">
+                        <label class="form-check-label" for="is_rented">是否出租</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">创建房屋</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">房屋列表</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>房屋信息</th>
+                                <th>面积(㎡)</th>
+                                <th>业主</th>
+                                <th>是否出租</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for house in houses %}
+                            <tr>
+                                <td>{{ house }}</td>
+                                <td>{{ house.area }}</td>
+                                <td>{{ house.owner.username|default:'-' }}</td>
+                                <td>
+                                    {% if house.is_rented %}
+                                    <span class="badge bg-warning">是</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">否</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">暂无房屋数据</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

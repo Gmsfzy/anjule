@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}门禁接口 - 安居乐{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">第三方门禁接口调用</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="house_id" class="form-label">房屋ID</label>
+                            <input type="number" class="form-control" id="house_id" name="house_id" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="user_id" class="form-label">用户ID</label>
+                            <input type="number" class="form-control" id="user_id" name="user_id" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">调用门禁接口</button>
+                </form>
+
+                {% if result %}
+                <div class="mt-4">
+                    <h5>接口返回结果：</h5>
+                    <div class="card bg-light p-3">
+                        <pre class="mb-0">{{ result|pprint }}</pre>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

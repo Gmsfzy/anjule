@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if user.role == 'resident' %}小区公告{% else %}公告管理{% endif %} - 安居乐{% endblock %}
+
+{% block content %}
+<div class="row">
+    {% if user.role == 'property_admin' or user.role == 'super_admin' %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">发布新公告</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {% if user.role == 'super_admin' %}
+                        <label for="community" class="form-label">所属小区</label>
+                        <select class="form-select" id="community" name="community" required>
+                            {% for community in communities %}
+                            <option value="{{ community.id }}">{{ community.name }}</option>
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="form-label">公告标题</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">公告内容</label>
+                        <textarea class="form-control" id="content" name="content" rows="6" required></textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_top" name="is_top">
+                        <label class="form-check-label" for="is_top">是否置顶</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">发布公告</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="{% if user.role == 'property_admin' or user.role == 'super_admin' %}col-md-6{% else %}col-12{% endif %}">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    {% if user.role == 'resident' %}小区公告列表{% elif user.role == 'property_admin' %}本小区公告{% else %}全平台公告{% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for notice in notices %}
+                    <div class="list-group-item {% if notice.is_top %}list-group-item-primary{% endif %}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ notice.title }} {% if notice.is_top %}<span class="badge bg-danger">置顶</span>{% endif %}</h5>
+                            <small>{{ notice.publish_time|date:'Y-m-d H:i' }}</small>
+                        </div>
+                        <p class="mb-1">{{ notice.content|truncatechars:100 }}</p>
+                        <small>发布人：{{ notice.publisher.username }} | 小区：{{ notice.community.name }}</small>
+                    </div>
+                    {% empty %}
+                    <div class="alert alert-info text-center mb-0">
+                        暂无公告数据
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

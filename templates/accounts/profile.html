@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}个人资料 - 安居乐{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">个人资料</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">用户名</label>
+                            <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                            <div class="form-text">用户名不可修改</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">手机号</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone|default:'' }}" maxlength="11">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">邮箱</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email|default:'' }}">
+                    </div>
+                    {% if user.role == 'resident' or user.role == 'property_admin' %}
+                    <div class="mb-3">
+                        <label for="community" class="form-label">所属小区</label>
+                        <select class="form-select" id="community" name="community">
+                            <option value="">-- 选择小区 --</option>
+                            {% for community in communities %}
+                            <option value="{{ community.id }}" {% if user.community and user.community.id == community.id %}selected{% endif %}>
+                                {{ community.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <label class="form-label">用户角色</label>
+                        <input type="text" class="form-control" value="{{ user.get_role_display }}" disabled>
+                    </div>
+                    <button type="submit" class="btn btn-primary">保存修改</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}楼栋管理 - 安居乐{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">创建新楼栋</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="community" class="form-label">所属小区</label>
+                        <select class="form-select" id="community" name="community" required>
+                            {% for community in communities %}
+                            <option value="{{ community.id }}">{{ community.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">楼栋名称</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="unit_count" class="form-label">单元数</label>
+                            <input type="number" class="form-control" id="unit_count" name="unit_count" min="1" value="1">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="floor_count" class="form-label">楼层数</label>
+                            <input type="number" class="form-control" id="floor_count" name="floor_count" min="1" value="18">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">创建楼栋</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">楼栋列表</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>所属小区</th>
+                                <th>单元数</th>
+                                <th>楼层数</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for building in buildings %}
+                            <tr>
+                                <td>{{ building.name }}</td>
+                                <td>{{ building.community.name }}</td>
+                                <td>{{ building.unit_count }}</td>
+                                <td>{{ building.floor_count }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">暂无楼栋数据</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}支付接口 - 安居乐{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">第三方支付接口调用</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="house_id" class="form-label">房屋ID</label>
+                            <input type="number" class="form-control" id="house_id" name="house_id" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="amount" class="form-label">支付金额(元)</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="amount" name="amount" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="payment_type" class="form-label">支付类型</label>
+                        <select class="form-select" id="payment_type" name="payment_type" required>
+                            <option value="property_fee">物业费</option>
+                            <option value="water_fee">水费</option>
+                            <option value="electric_fee">电费</option>
+                            <option value="gas_fee">燃气费</option>
+                            <option value="other">其他费用</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">调用支付接口</button>
+                </form>
+
+                {% if result %}
+                <div class="mt-4">
+                    <h5>接口返回结果：</h5>
+                    <div class="card bg-light p-3">
+                        <pre class="mb-0">{{ result|pprint }}</pre>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

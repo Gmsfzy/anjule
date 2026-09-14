@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}安居乐智慧社区管理平台{% endblock %}</title>
+    <!-- Bootstrap 5 中文CDN -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <style>
+        .navbar {
+            background-color: #2c3e50;
+        }
+        .navbar-brand, .nav-link {
+            color: #ecf0f1 !important;
+        }
+        .nav-link:hover {
+            color: #3498db !important;
+        }
+        .content {
+            margin-top: 20px;
+            min-height: calc(100vh - 120px);
+        }
+        .footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px 0;
+            margin-top: 30px;
+        }
+        .alert {
+            margin-top: 10px;
+        }
+        .card {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class="fas fa-home me-2"></i>安居乐
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- 未登录状态 -->
+                {% if not user.is_authenticated %}
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user-login' %}">登录</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user-register' %}">注册</a>
+                    </li>
+                </ul>
+                {% else %}
+                <!-- 已登录状态 - 根据角色显示不同菜单 -->
+                <ul class="navbar-nav">
+                    <!-- 通用菜单 -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">首页</a>
+                    </li>
+
+                    <!-- 住户专属菜单 -->
+                    {% if user.role == 'resident' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            住户服务
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'user-profile' %}">个人信息</a></li>
+                            <li><a class="dropdown-item" href="{% url 'resident-houses-list' %}">我的房屋</a></li>
+                            <li><a class="dropdown-item" href="{% url 'repair-orders-list' %}">我的报修</a></li>
+                            <li><a class="dropdown-item" href="{% url 'notices-list' %}">小区公告</a></li>
+                            <li><a class="dropdown-item" href="{% url 'payments-list' %}">缴费记录</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- 物业管理员专属菜单 -->
+                    {% elif user.role == 'property_admin' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            物业管理
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'property-users-list' %}">小区用户</a></li>
+                            <li><a class="dropdown-item" href="{% url 'buildings-list' %}">楼栋管理</a></li>
+                            <li><a class="dropdown-item" href="{% url 'houses-list' %}">房屋管理</a></li>
+                            <li><a class="dropdown-item" href="{% url 'repair-orders-list' %}">报修处理</a></li>
+                            <li><a class="dropdown-item" href="{% url 'notices-list' %}">公告管理</a></li>
+                            <li><a class="dropdown-item" href="{% url 'payments-list' %}">缴费管理</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- 超级管理员专属菜单 -->
+                    {% elif user.role == 'super_admin' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            平台管理
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'super-users-list' %}">用户管理</a></li>
+                            <li><a class="dropdown-item" href="{% url 'communities-list' %}">小区管理</a></li>
+                            <li><a class="dropdown-item" href="{% url 'buildings-list' %}">楼栋管理</a></li>
+                            <li><a class="dropdown-item" href="{% url 'houses-list' %}">房屋管理</a></li>
+                            <li><a class="dropdown-item" href="{% url 'repair-orders-list' %}">报修总览</a></li>
+                            <li><a class="dropdown-item" href="{% url 'payments-list' %}">缴费总览</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- 第三方服务商专属菜单 -->
+                    {% elif user.role == 'third_party' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            服务接口
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'third-party-payment' %}">支付接口</a></li>
+                            <li><a class="dropdown-item" href="{% url 'third-party-access' %}">门禁接口</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <!-- 用户信息与登出 -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>{{ user.username }} ({{ user.get_role_display }})
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'user-profile' %}">个人中心</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'user-logout' %}">退出登录</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- 消息提示 -->
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="container content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p>© 2025 安居乐智慧社区管理平台 版权所有</p>
+            <p>技术支持：安居乐研发团队</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS 及依赖 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
